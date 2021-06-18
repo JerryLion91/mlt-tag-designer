@@ -1,0 +1,60 @@
+.input-container {
+  position: relative;
+  margin: 20px 0px;
+}
+.input-container label {
+  position: absolute;
+  top: 5px;
+  left: 0px;
+  font-size: calc(12px + 1vmin);
+  pointer-events: none;
+  font-weight: 600;
+  color: #882aa2;
+  font-family: 'Asap';
+  color: #999;
+  transition: 0.2s ease all;
+  -moz-transition: 0.2s ease all;
+  -webkit-transition: 0.2s ease all;
+}
+.input-container input {
+  border: 0;
+  border-bottom: 1px solid #555;
+  background: transparent;
+  width: 100%;
+  padding: 8px 0 5px 0;
+  font-size: calc(10px + 1vmin);
+  color: #37474f;
+  font-family: 'Asap';
+  font-weight: 500;
+}
+
+.input-container input:focus {
+  border: none;
+  outline: none;
+  border-bottom: 1px solid #882aa2;
+}
+
+.input-container input:focus ~ label,
+.input-container input:valid ~ label,
+.input-container .hasValue ~ label {
+  top: -20px;
+  font-size: calc(6px + 1vmin);
+  color: #882aa2;
+}
+
+.input-container .hasValue:invalid {
+  border-bottom: 1px solid red;
+}
+.input-container .hasValue:invalid ~ label {
+  color: red;
+}
+
+.input-container .invalidPassword:focus,
+.input-container .invalidPassword {
+  border-bottom: 1px solid red;
+}
+.input-container .invalidPassword:focus ~ label,
+.input-container .invalidPassword:valid ~ label,
+.input-container .invalidPassword ~ label {
+  color: red;
+}

@@ -1,25 +1,63 @@
-import logo from './logo.svg';
-import './App.css';
+// Libs
+import React from 'react';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
-function App() {
+// Components
+import HomePage from './pages/HomePage';
+import LoadingPage from './pages/LoadingPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import HomeContactForm from './pages/HomeContactForm';
+
+import ParentTagContructor from './components/Parents/ParentTagConstructor';
+import ParentUser from './components/Parents/ParentUser';
+
+// Providers
+import { ProvideAuth, useAuth } from './helpers/use-auth.js';
+
+export default function App() {
+  const auth = useAuth();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ProvideAuth>
+      <BrowserRouter>
+        <Switch>
+          <Route path="/login/register">
+            {auth ? (
+              <Redirect
+                to={{
+                  pathname: '/',
+                }}
+              />
+            ) : (
+              <RegisterPage />
+            )}
+          </Route>
+          <Route path="/login">
+            {auth ? (
+              <Redirect
+                to={{
+                  pathname: '/',
+                }}
+              />
+            ) : (
+              <LoginPage />
+            )}
+          </Route>
+          <Route path="/tag-constructor">
+            <ParentTagContructor />
+          </Route>
+          <Route path="/user">
+            <ParentUser />
+          </Route>
+          <Route path="/contact-form">
+            <HomeContactForm />
+          </Route>
+          <Route path="/">
+            <HomePage />
+          </Route>
+        </Switch>
+      </BrowserRouter>
+    </ProvideAuth>
   );
 }
-
-export default App;
