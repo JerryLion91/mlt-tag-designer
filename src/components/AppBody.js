@@ -15,6 +15,10 @@ const styles = {
     justifyContent: 'flex-start',
     fontSize: 'calc(9px + 1vmin)',
     color: 'rgb(241, 226, 13)',
+    minWidth: '150px',
+    maxWidth: '400px',
+    width: '80vw',
+    margin: '3vh auto',
   },
 };
 

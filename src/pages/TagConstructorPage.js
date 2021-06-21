@@ -88,15 +88,6 @@ export default function TagConstructorPage({ changeOrder }) {
           Finish Design
         </Button>
       </AppBody>
-
-      {/* This empity <p> will load the fonts */}
-      <p style={{ fontFamily: 'Serif', ...style }}>Serif</p>
-      <p style={{ fontFamily: 'Arial', ...style }}>Arial</p>
-      <p style={{ fontFamily: 'Monospace', ...style }}>Monospace</p>
-      <p style={{ fontFamily: 'Chicle', ...style }}>Chicle</p>
-      <p style={{ fontFamily: 'Fredoka One', ...style }}>Fredoka</p>
-      <p style={{ fontFamily: 'Lemon', ...style }}>Lemon</p>
-      <p style={{ fontFamily: 'Salsa', ...style }}>Salsa</p>
       <Footer />
     </>
   );

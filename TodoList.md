@@ -61,7 +61,7 @@
 
 ### `UserProfile`
 
-- [ ] input width must be responsive to input value
+- [x] input width must be responsive to input value
 
 ### `UserAddresses`
 

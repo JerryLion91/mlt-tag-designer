@@ -104,7 +104,7 @@ export default function ProfilePage() {
             alt=""
           />
         )}
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative', width: '80%' }}>
           <Input
             type="text"
             label="Username"
@@ -141,7 +141,7 @@ export default function ProfilePage() {
             </i>
           )}
         </div>
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative', width: '80%' }}>
           <Input
             type="email"
             label="Email"
@@ -179,7 +179,7 @@ export default function ProfilePage() {
           )}
         </div>
         {pwdInput ? (
-          <div>
+          <div style={{ width: '80%' }}>
             <Input
               type="password"
               label="Current Password"

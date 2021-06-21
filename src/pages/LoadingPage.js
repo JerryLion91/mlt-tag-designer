@@ -11,7 +11,11 @@ export default function LoadingPage() {
     <>
       <Header />
       <AppBody>
-        <img style={styles.loadingGif} src={'loading.gif'} alt="loading..." />
+        <img
+          style={styles.loadingGif}
+          src={'../loading.gif'}
+          alt="loading..."
+        />
       </AppBody>
       <Footer />
     </>

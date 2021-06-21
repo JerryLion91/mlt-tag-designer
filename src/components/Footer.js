@@ -38,7 +38,7 @@ export default function Footer({ children, defaultButtons }) {
       </div>
       <div style={styles.divFlexRow}>
         <img
-          src={'logo.svg'}
+          src={'../logo.svg'}
           alt={''}
           style={{ height: '25px', marginRight: '5px' }}
         />
