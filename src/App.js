@@ -12,6 +12,9 @@ import HomeContactForm from './pages/HomeContactForm';
 import ParentTagContructor from './components/Parents/ParentTagConstructor';
 import ParentUser from './components/Parents/ParentUser';
 
+// Helpers
+import ScrollToTop from './helpers/ScrollToTop';
+
 // Providers
 import { ProvideAuth, useAuth } from './helpers/use-auth.js';
 
@@ -21,6 +24,7 @@ export default function App() {
   return (
     <ProvideAuth>
       <BrowserRouter>
+        <ScrollToTop />
         <Switch>
           <Route path="/login/register">
             {auth ? (
