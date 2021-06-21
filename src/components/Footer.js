@@ -1,24 +1,37 @@
+// Libs
 import React from 'react';
 
-import { useHistory } from 'react-router-dom';
+// Helpers
+import { useHistory, useLocation } from 'react-router-dom';
+
+// Components
 import Button from './Button';
 
+// Misc
 import PropTypes from 'prop-types';
 
 export default function Footer({ children, defaultButtons }) {
   const history = useHistory();
+  const location = useLocation();
+
+  const goTo = (pathname) => {
+    if (location.pathname === pathname) {
+      window.scrollTo(0, 0);
+    } else {
+      history.push(pathname);
+    }
+  };
+
   return (
     <footer style={styles.footer}>
       <div style={styles.divFlexColumn}>
         {defaultButtons ? (
           <>
-            <Button onClick={() => history.push('/')}>Home</Button>
-            <Button onClick={() => history.push('/tag-constructor')}>
+            <Button onClick={() => goTo('/')}>Home</Button>
+            <Button onClick={() => goTo('/tag-constructor')}>
               Tag Designer
             </Button>
-            <Button onClick={() => history.push('/contact-form')}>
-              Contact Us
-            </Button>
+            <Button onClick={() => goTo('/contact-form')}>Contact Us</Button>
           </>
         ) : null}
         {children}

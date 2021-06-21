@@ -14,7 +14,7 @@
 
 ### `LoadingPage`
 
-- [ ] Nothing to Change
+- [x] Nothing to Change
 
 ### `LoginPage`
 
