@@ -124,6 +124,20 @@ export default function LoginPage() {
     <>
       <MessageModal state={modalState} dispatch={modalDispatch} />
       <header style={styles.loginHeader}>
+        <div
+          style={{
+            minWidth: '270px',
+            maxWidth: '450px',
+            width: '80%',
+            height: '2vh',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'stretch',
+            flexDirection: 'row',
+          }}
+        >
+          <Button onClick={() => history.push('/')} icon={'navigate_before'} />
+        </div>
         <img
           src={'logoLogin.svg'}
           alt={''}

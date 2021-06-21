@@ -10,7 +10,7 @@
 ### `HomePage`
 
 - [x] Correct line style
-- [ ] When home page shortcut in the footer is clicked, scroll up
+- [x] When home page shortcut in the footer is clicked, scroll up
 
 ### `LoadingPage`
 
@@ -18,7 +18,7 @@
 
 ### `LoginPage`
 
-- [ ] Add back button
+- [x] Add back button
 - [ ] Add loading gif when login is clicked
 
 ### `RegisterPage`
