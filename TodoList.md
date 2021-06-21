@@ -28,7 +28,7 @@
 - [x] Add button to redirect to login
 - [ ] Handle error: case 'auth/email-already-in-use': redirect to login page
 - [ ] Check add addresses function
-- [ ] Add loading gif when register is clicked
+- [x] Add loading gif when register is clicked
 
 ## TagConstructorPages
 

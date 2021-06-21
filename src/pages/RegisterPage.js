@@ -5,12 +5,13 @@ import React from 'react';
 import { useAuth } from '../helpers/use-auth';
 import { useHistory, useLocation } from 'react-router-dom';
 
-// components
+// Components
 import Button from '../components/Button';
 import Footer from '../components/Footer';
 import MessageModal from '../components/MessageModal';
 import RegisterForm from '../components/RegisterForm';
 import SettingsButton from '../components/SettingsButton';
+import LoadingComponent from '../components/LoadingComponent';
 
 // Styles
 import styles from '../styles/styles';
@@ -19,6 +20,8 @@ export default function RegisterPage() {
   const auth = useAuth();
   const history = useHistory();
   const { email: receivedEmail } = useLocation().state || { email: '' };
+
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const handleChange = (update) => {
     const { input, value } = update;
@@ -40,6 +43,7 @@ export default function RegisterPage() {
   }, []);
 
   const handleRegister = () => {
+    setIsLoading(true);
     const { name, password, repeatedPassword, email, address } = userInput;
     if (password !== repeatedPassword) {
       handleShowMessage({
@@ -52,6 +56,7 @@ export default function RegisterPage() {
       .signUp(email, password, name, address)
       .then((user) => {
         history.push('/');
+        setIsLoading(false);
       })
       .catch((err) => {
         handleShowMessage(err);
@@ -96,8 +101,10 @@ export default function RegisterPage() {
   };
 
   const signInWithGoogle = () => {
+    setIsLoading(true);
     auth.signInWithGooglePopup(() => {
       history.push('/');
+      setIsLoading(false);
     });
   };
 
@@ -132,38 +139,44 @@ export default function RegisterPage() {
       <div style={styles.divFlexColumn}>
         <span style={styles.loginHeading1}>Register</span>
         <span style={styles.loginHeading2}>Hello! Please to meet you.</span>
-        <RegisterForm state={userInput} onChange={handleChange} />
-        <Button
-          style={styles.btnFilledPurple}
-          onClick={handleRegister}
-          icon={''}
-        >
-          Register
-        </Button>
-        <div style={{ position: 'relative' }}>
-          <img
-            src={'../google.jpg'}
-            alt={''}
-            style={{
-              height: 'calc(29px + 1vh)',
-              width: 'calc(29px + 1vh)',
-              position: 'absolute',
-              left: '0',
-              bottom: '0',
-              padding: '0px',
-              margin: '25px 0px 5px 0px',
-              border: 'solid 1px #520369',
-              borderRadius: '5px',
-            }}
-          />
-          <Button
-            style={styles.btnFilledPurple}
-            onClick={signInWithGoogle}
-            icon={''}
-          >
-            sign up with Google
-          </Button>
-        </div>
+        {isLoading ? (
+          <LoadingComponent height={'20vh'} />
+        ) : (
+          <>
+            <RegisterForm state={userInput} onChange={handleChange} />
+            <Button
+              style={styles.btnFilledPurple}
+              onClick={handleRegister}
+              icon={''}
+            >
+              Register
+            </Button>
+            <div style={{ position: 'relative' }}>
+              <img
+                src={'../google.jpg'}
+                alt={''}
+                style={{
+                  height: 'calc(29px + 1vh)',
+                  width: 'calc(29px + 1vh)',
+                  position: 'absolute',
+                  left: '0',
+                  bottom: '0',
+                  padding: '0px',
+                  margin: '25px 0px 5px 0px',
+                  border: 'solid 1px #520369',
+                  borderRadius: '5px',
+                }}
+              />
+              <Button
+                style={styles.btnFilledPurple}
+                onClick={signInWithGoogle}
+                icon={''}
+              >
+                sign up with Google
+              </Button>
+            </div>
+          </>
+        )}
       </div>
       <Footer defaultButtons />
     </>
