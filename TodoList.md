@@ -19,7 +19,7 @@
 ### `LoginPage`
 
 - [x] Add back button
-- [ ] Add loading gif when login is clicked
+- [x] Add loading gif when login is clicked
 
 ### `RegisterPage`
 

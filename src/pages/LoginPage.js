@@ -11,6 +11,7 @@ import Footer from '../components/Footer';
 import MessageModal from '../components/MessageModal';
 import Input from '../components/Input';
 import SettingsButton from '../components/SettingsButton';
+import LoadingComponent from '../components/LoadingComponent';
 
 // Styles
 import styles from '../styles/styles';
@@ -19,6 +20,8 @@ export default function LoginPage() {
   const auth = useAuth();
   const history = useHistory();
   const { from } = useLocation().state || { from: { pathname: '/' } };
+
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const userReducer = (state, action) => {
     switch (action.type) {
@@ -49,8 +52,10 @@ export default function LoginPage() {
   };
 
   const signInWithGoogle = () => {
+    setIsLoading(true);
     auth.signInWithGooglePopup(() => {
       history.push(from.pathname);
+      setIsLoading(false);
     });
   };
 
@@ -154,63 +159,72 @@ export default function LoginPage() {
         <span style={styles.loginHeading2}>
           Hi there! Nice to see you again
         </span>
-        <Input
-          type="email"
-          label="Email"
-          value={userInput.email}
-          onChange={(newEmail) =>
-            dispatchUserInput({ type: 'email', value: newEmail })
-          }
-        />
-        <Input
-          type="password"
-          label="Password"
-          value={userInput.password}
-          onChange={(newPassword) =>
-            dispatchUserInput({ type: 'password', value: newPassword })
-          }
-        />
-        <Button
-          style={styles.btnFilledPurple}
-          onClick={signInWithEmail}
-          icon={''}
-        >
-          Login
-        </Button>
-        <div style={styles.divFlexRow}>
-          <Button style={styles.btnUnfilledGray} onClick={handleForgotPassword}>
-            Forgot Password?
-          </Button>
-          <Button
-            style={styles.btnUnfilledColor}
-            onClick={() => history.push('/login/register')}
-          >
-            Register
-          </Button>
-        </div>
-        <div style={{ position: 'relative' }}>
-          <img
-            src={'../google.jpg'}
-            alt={''}
-            style={{
-              height: 'calc(29px + 1vh)',
-              position: 'absolute',
-              left: '0',
-              bottom: '0',
-              padding: '0px',
-              margin: '25px 0px 5px 0px',
-              border: 'solid 1px #520369',
-              borderRadius: '5px',
-            }}
-          />
-          <Button
-            style={styles.btnFilledPurple}
-            onClick={signInWithGoogle}
-            icon={''}
-          >
-            sign in with Google
-          </Button>
-        </div>
+        {isLoading ? (
+          <LoadingComponent height={'20vh'} />
+        ) : (
+          <>
+            <Input
+              type="email"
+              label="Email"
+              value={userInput.email}
+              onChange={(newEmail) =>
+                dispatchUserInput({ type: 'email', value: newEmail })
+              }
+            />
+            <Input
+              type="password"
+              label="Password"
+              value={userInput.password}
+              onChange={(newPassword) =>
+                dispatchUserInput({ type: 'password', value: newPassword })
+              }
+            />
+            <Button
+              style={styles.btnFilledPurple}
+              onClick={signInWithEmail}
+              icon={''}
+            >
+              Login
+            </Button>
+            <div style={styles.divFlexRow}>
+              <Button
+                style={styles.btnUnfilledGray}
+                onClick={handleForgotPassword}
+              >
+                Forgot Password?
+              </Button>
+              <Button
+                style={styles.btnUnfilledColor}
+                onClick={() => history.push('/login/register')}
+              >
+                Register
+              </Button>
+            </div>
+            <div style={{ position: 'relative' }}>
+              <img
+                src={'../google.jpg'}
+                alt={''}
+                style={{
+                  height: 'calc(29px + 1vh)',
+                  position: 'absolute',
+                  left: '0',
+                  bottom: '0',
+                  padding: '0px',
+                  margin: '25px 0px 5px 0px',
+                  border: 'solid 1px #520369',
+                  borderRadius: '5px',
+                }}
+              />
+              <Button
+                style={styles.btnFilledPurple}
+                onClick={signInWithGoogle}
+                icon={''}
+              >
+                sign in with Google
+              </Button>
+            </div>
+          </>
+        )}
       </div>
       <Footer defaultButtons />
     </>
