@@ -23,9 +23,9 @@
 
 ### `RegisterPage`
 
-- [ ] Add back button
-- [ ] Add login with Google Button
-- [ ] Add button to redirect to login
+- [x] Add back button
+- [x] Add login with Google Button
+- [x] Add button to redirect to login
 - [ ] Handle error: case 'auth/email-already-in-use': redirect to login page
 - [ ] Check add addresses function
 - [ ] Add loading gif when register is clicked

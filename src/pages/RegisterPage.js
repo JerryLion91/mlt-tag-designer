@@ -10,6 +10,7 @@ import Button from '../components/Button';
 import Footer from '../components/Footer';
 import MessageModal from '../components/MessageModal';
 import RegisterForm from '../components/RegisterForm';
+import SettingsButton from '../components/SettingsButton';
 
 // Styles
 import styles from '../styles/styles';
@@ -94,10 +95,31 @@ export default function RegisterPage() {
     }
   };
 
+  const signInWithGoogle = () => {
+    auth.signInWithGooglePopup(() => {
+      history.push('/');
+    });
+  };
+
   return (
     <>
       <MessageModal state={modalState} dispatch={modalDispatch} />
       <header style={styles.loginHeader}>
+        <div
+          style={{
+            minWidth: '270px',
+            maxWidth: '450px',
+            width: '80%',
+            height: '2vh',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'stretch',
+            flexDirection: 'row-reverse',
+          }}
+        >
+          <SettingsButton />
+          <Button onClick={() => history.push('/')} icon={'navigate_before'} />
+        </div>
         <img
           src={'../logoLogin.svg'}
           alt={''}
@@ -118,6 +140,30 @@ export default function RegisterPage() {
         >
           Register
         </Button>
+        <div style={{ position: 'relative' }}>
+          <img
+            src={'../google.jpg'}
+            alt={''}
+            style={{
+              height: 'calc(29px + 1vh)',
+              width: 'calc(29px + 1vh)',
+              position: 'absolute',
+              left: '0',
+              bottom: '0',
+              padding: '0px',
+              margin: '25px 0px 5px 0px',
+              border: 'solid 1px #520369',
+              borderRadius: '5px',
+            }}
+          />
+          <Button
+            style={styles.btnFilledPurple}
+            onClick={signInWithGoogle}
+            icon={''}
+          >
+            sign up with Google
+          </Button>
+        </div>
       </div>
       <Footer defaultButtons />
     </>

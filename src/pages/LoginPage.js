@@ -10,6 +10,7 @@ import Button from '../components/Button';
 import Footer from '../components/Footer';
 import MessageModal from '../components/MessageModal';
 import Input from '../components/Input';
+import SettingsButton from '../components/SettingsButton';
 
 // Styles
 import styles from '../styles/styles';
@@ -133,9 +134,10 @@ export default function LoginPage() {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'stretch',
-            flexDirection: 'row',
+            flexDirection: 'row-reverse',
           }}
         >
+          <SettingsButton />
           <Button onClick={() => history.push('/')} icon={'navigate_before'} />
         </div>
         <img
@@ -188,7 +190,7 @@ export default function LoginPage() {
         </div>
         <div style={{ position: 'relative' }}>
           <img
-            src={'google.jpg'}
+            src={'../google.jpg'}
             alt={''}
             style={{
               height: 'calc(29px + 1vh)',
