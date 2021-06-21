@@ -1,9 +1,9 @@
 // Libs
 import React from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
 
 // Helpers
 import { useKeypress } from '../helpers/use-keypress';
+import { useHistory, useLocation } from 'react-router-dom';
 
 // style Components
 import Header from '../components/Header';

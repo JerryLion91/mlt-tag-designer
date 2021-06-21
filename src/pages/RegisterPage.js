@@ -55,8 +55,8 @@ export default function RegisterPage() {
     auth
       .signUp(email, password, name, address)
       .then((user) => {
-        history.push('/');
         setIsLoading(false);
+        history.push('/');
       })
       .catch((err) => {
         handleShowMessage(err);

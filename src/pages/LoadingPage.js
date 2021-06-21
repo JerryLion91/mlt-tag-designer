@@ -1,7 +1,10 @@
+// Libs
 import React from 'react';
+
+// Components
+import Header from '../components/Header';
 import AppBody from '../components/AppBody';
 import Footer from '../components/Footer';
-import Header from '../components/Header';
 
 // Styles
 import styles from '../styles/styles';

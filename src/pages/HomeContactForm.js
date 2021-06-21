@@ -1,9 +1,9 @@
 // Libs
 import React from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
 
 // Helpers
 import { useAuth } from '../helpers/use-auth';
+import { useHistory, useLocation } from 'react-router-dom';
 
 // style Components
 import Header from '../components/Header';

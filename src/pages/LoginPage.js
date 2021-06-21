@@ -54,8 +54,8 @@ export default function LoginPage() {
   const signInWithGoogle = () => {
     setIsLoading(true);
     auth.signInWithGooglePopup(() => {
-      history.push(from.pathname);
       setIsLoading(false);
+      history.push(from.pathname);
     });
   };
 
@@ -78,6 +78,7 @@ export default function LoginPage() {
     history.push(userLocation);
   };
 
+  // start modal code
   const modalReducer = (_, action) => {
     switch (action.type) {
       case 'trigger':
@@ -125,6 +126,7 @@ export default function LoginPage() {
         break;
     }
   };
+  // end modal code
 
   return (
     <>

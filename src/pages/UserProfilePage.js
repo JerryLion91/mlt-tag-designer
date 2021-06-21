@@ -1,39 +1,50 @@
+// Libs
 import React from 'react';
 
+// Helpers
+import { useAuth } from '../helpers/use-auth';
+import { useHistory, useLocation } from 'react-router-dom';
+
+// style Components
+import Header from '../components/Header';
 import AppBody from '../components/AppBody';
 import Button from '../components/Button';
 import Footer from '../components/Footer';
-import Header from '../components/Header';
-import SettingsButton from '../components/SettingsButton';
-import { useHistory, useLocation } from 'react-router-dom';
-import { useAuth } from '../helpers/use-auth';
-import Input from '../components/Input';
 
+// functional Components
+import SettingsButton from '../components/SettingsButton';
+import Input from '../components/Input';
+import MessageModal from '../components/MessageModal';
+
+// Styles
 import styles from '../styles/styles';
 
 export default function ProfilePage() {
-  let location = useLocation();
-  let history = useHistory();
-
-  let { from } = location.state || { from: '/' };
+  const history = useHistory();
+  const { from } = useLocation().state || { from: '/' };
 
   const auth = useAuth();
+  if (auth.user === null) {
+    history.push('/');
+  }
   const { displayName, email, photoURL, uid } = auth.user;
 
-  const [userName, setUserName] = React.useState(displayName);
-  const handleUsernameChange = (newName) => setUserName(newName);
-
-  const [userEmail, setUserEmail] = React.useState(email);
-  const handleUserEmailChange = (newEmail) => setUserEmail(newEmail);
-
-  const [userOldPwd, setUserOldPwd] = React.useState('');
-  const handleUserOldPwdChange = (tipedOldPwd) => setUserOldPwd(tipedOldPwd);
-
-  const [userNewPwd, setUserNewPwd] = React.useState('');
-  const handleUserNewPwdChange = (tipedNewPwd) => setUserNewPwd(tipedNewPwd);
-
-  const [userNewPwd2, setUserNewPwd2] = React.useState('');
-  const handleUserNewPwdChange2 = (tipedNewPwd) => setUserNewPwd2(tipedNewPwd);
+  const userReducer = (state, action) => {
+    const { type, input, value } = action;
+    switch (type) {
+      case 'change':
+        return { ...state, [input]: value };
+      default:
+        throw new Error();
+    }
+  };
+  const [userInfo, setUserInfo] = React.useReducer(userReducer, {
+    name: displayName,
+    email: email,
+    oldPassword: '',
+    newPassword: '',
+    newPassword2: '',
+  });
 
   const [pwdInput, setPwdInput] = React.useState(false);
   const handleUpdatePassword = () => setPwdInput(false);
@@ -43,17 +54,17 @@ export default function ProfilePage() {
     if (auth.user.emailVerified === false) {
       alert('EMAIL NOT VERIFIED');
     }
-    auth.sendPasswordResetEmail(userEmail);
+    auth.sendPasswordResetEmail(userInfo.email);
     alert('We will send you an email to change the password');
   };
 
   const goBack = () => {
-    if (userName !== displayName) {
+    if (userInfo.name !== displayName) {
       console.log(displayName);
       alert('Confirm the name change first');
       return;
     }
-    if (userEmail !== email) {
+    if (userInfo.email !== email) {
       alert('Confirm the email change first');
       return;
     }
@@ -65,33 +76,87 @@ export default function ProfilePage() {
   };
 
   const handleUpdateUserName = () => {
-    auth.updateUserName(uid, userName).then(() => {
-      setUserName('');
-      setUserName(auth.user.displayName);
+    auth.updateUserName(uid, userInfo.name).then(() => {
+      setUserInfo({ type: 'change', input: 'name', value: '' });
+      setUserInfo({
+        type: 'change',
+        input: 'name',
+        value: auth.user.displayName,
+      });
     });
   };
 
   const handleUpdateEmail = () => {
     auth
-      .updateUserEmail(userEmail)
+      .updateUserEmail(userInfo.email)
       .then(() => {
-        setUserEmail('');
-        setUserEmail(auth.user.email);
+        setUserInfo({ type: 'change', input: 'email', value: '' });
+        setUserInfo({ type: 'change', input: 'email', value: auth.user.email });
       })
-      .catch((error) => {
-        if (error.code === 'auth/requires-recent-login') {
-          alert(error.message);
-          history.push('/login');
-        }
-        if (error.com === 'auth/invalid-email') {
-          alert(error.message);
-        }
-        console.log(error);
+      .catch((err) => {
+        handleShowMessage(err);
       });
     console.log('EmailUpdated');
   };
+
+  const redirectToLogin = (email) => {
+    const userLocation = {
+      pathname: '/login',
+      state: { email: email },
+    };
+    history.push(userLocation);
+  };
+
+  // start modal code
+  const modalReducer = (_, action) => {
+    switch (action.type) {
+      case 'trigger':
+        const { method, message, value, callback } = action;
+        return { showModal: true, method, message, value, callback };
+      case 'response':
+        if (action.callback) {
+          action.callback(action.value);
+        }
+        return { showModal: false };
+      default:
+        throw new Error();
+    }
+  };
+
+  const [modalState, modalDispatch] = React.useReducer(modalReducer, {
+    showModal: false,
+    method: null,
+    message: null,
+    value: null,
+    callback: null,
+  });
+
+  const handleShowMessage = (props) => {
+    const { code, message } = props;
+    switch (code) {
+      case 'auth/requires-recent-login':
+        modalDispatch({
+          type: 'trigger',
+          method: 'confirm',
+          message: `${message} Do you want to register insted? `,
+          value: userInfo.email,
+          callback: redirectToLogin,
+        });
+        break;
+      case 'auth/invalid-email':
+        modalDispatch({ type: 'trigger', method: 'alert', message });
+        break;
+      default:
+        console.log(props);
+        console.log({ code, message });
+        break;
+    }
+  };
+  // end modal code
+
   return (
     <>
+      <MessageModal state={modalState} dispatch={modalDispatch} />
       <Header subtitle="My Profile">
         <SettingsButton />
         <Button onClick={goBack} icon={'navigate_before'} />
@@ -108,10 +173,12 @@ export default function ProfilePage() {
           <Input
             type="text"
             label="Username"
-            value={userName}
-            onChange={handleUsernameChange}
+            value={userInfo.name}
+            onChange={(newName) =>
+              setUserInfo({ type: 'change', input: 'name', value: newName })
+            }
           />
-          {userName !== displayName ? (
+          {userInfo.name !== displayName ? (
             <Button
               style={{
                 color: 'grey',
@@ -145,10 +212,12 @@ export default function ProfilePage() {
           <Input
             type="email"
             label="Email"
-            value={userEmail}
-            onChange={handleUserEmailChange}
+            value={userInfo.email}
+            onChange={(newEmail) =>
+              setUserInfo({ type: 'change', input: 'email', value: newEmail })
+            }
           />
-          {userEmail !== email ? (
+          {userInfo.email !== email ? (
             <Button
               style={{
                 color: 'grey',
@@ -179,24 +248,62 @@ export default function ProfilePage() {
           )}
         </div>
         {pwdInput ? (
-          <div style={{ width: '80%' }}>
+          <div
+            style={{ ...styles.cardParent, position: 'relative', width: '80%' }}
+          >
+            <i
+              style={{
+                width: '30px',
+                color: 'grey',
+                fontSize: 'calc(15px + 1vmin)',
+                position: 'absolute',
+                right: '0',
+                top: '0',
+                padding: '10px 0px',
+                margin: '0px 0px 0px 0px',
+              }}
+              className="material-icons"
+              onClick={() => {
+                setPwdInput(false);
+              }}
+            >
+              close
+            </i>
             <Input
               type="password"
               label="Current Password"
-              value={userOldPwd}
-              onChange={handleUserOldPwdChange}
+              value={userInfo.oldPassword}
+              onChange={(newValue) =>
+                setUserInfo({
+                  type: 'change',
+                  input: 'oldPassword',
+                  value: newValue,
+                })
+              }
             />
             <Input
               type="password"
               label="New Password"
-              value={userNewPwd}
-              onChange={handleUserNewPwdChange}
+              value={userInfo.newPassword}
+              onChange={(newValue) =>
+                setUserInfo({
+                  type: 'change',
+                  input: 'newPassword',
+                  value: newValue,
+                })
+              }
             />
             <Input
               type="password"
               label="Repeat the Password"
-              value={userNewPwd2}
-              onChange={handleUserNewPwdChange2}
+              value={userInfo.newPassword2}
+              onChange={(newValue) =>
+                setUserInfo({
+                  type: 'change',
+                  input: 'newPassword2',
+                  value: newValue,
+                })
+              }
             />
             <Button
               style={styles.btnFilledPurple}
