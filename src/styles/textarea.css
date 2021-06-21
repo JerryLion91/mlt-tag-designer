@@ -18,7 +18,7 @@
 }
 .input-container .helper {
   position: absolute;
-  top: -1em;
+  top: -1.2em;
   right: 0px;
   font-size: calc(6px + 1vmin);
   pointer-events: none;
