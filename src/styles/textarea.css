@@ -1,6 +1,6 @@
 .input-container {
   position: relative;
-  margin: 20px 0px 5px 0px;
+  margin: 20px 0px;
 }
 .input-container label {
   position: absolute;
@@ -16,7 +16,7 @@
   -moz-transition: 0.2s ease all;
   -webkit-transition: 0.2s ease all;
 }
-.input-container span {
+.input-container .helper {
   position: absolute;
   top: -1em;
   right: 0px;
@@ -26,11 +26,23 @@
   color: #882aa2;
   font-family: 'Asap';
 }
-.input-container input {
+.input-container .counter {
+  position: absolute;
+  top: calc(20vh + 18px);
+  right: 0px;
+  font-size: calc(6px + 1vmin);
+  pointer-events: none;
+  font-weight: 500;
+  color: #882aa2;
+  font-family: 'Asap';
+}
+.input-container textarea {
+  resize: none;
   border: 0;
   border-bottom: 1px solid #555;
   background: transparent;
   width: 100%;
+  height: 20vh;
   padding: 8px 0 5px 0;
   font-size: calc(10px + 1vmin);
   color: #37474f;
@@ -38,14 +50,14 @@
   font-weight: 500;
 }
 
-.input-container input:focus {
+.input-container textarea:focus {
   border: none;
   outline: none;
   border-bottom: 1px solid #882aa2;
 }
 
-.input-container input:focus ~ label,
-.input-container input:valid ~ label,
+.input-container textarea:focus ~ label,
+.input-container textarea:valid ~ label,
 .input-container .hasValue ~ label {
   top: -1em;
   font-size: calc(6px + 1vmin);
@@ -56,15 +68,5 @@
   border-bottom: 1px solid red;
 }
 .input-container .hasValue:invalid ~ label {
-  color: red;
-}
-
-.input-container .invalidPassword:focus,
-.input-container .invalidPassword {
-  border-bottom: 1px solid red;
-}
-.input-container .invalidPassword:focus ~ label,
-.input-container .invalidPassword:valid ~ label,
-.input-container .invalidPassword ~ label {
   color: red;
 }

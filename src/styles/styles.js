@@ -39,7 +39,7 @@ const styles = {
   // loadind page styles
   loadingGif: {
     margin: 'auto',
-    width: '40%',
+    width: '25%',
     maxWidth: '180px',
   },
   // login page styles

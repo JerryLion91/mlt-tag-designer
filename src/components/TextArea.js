@@ -2,10 +2,9 @@ import React from 'react';
 
 import PropTypes from 'prop-types';
 
-import '../styles/input.css';
+import '../styles/textarea.css';
 
-export default function Input({
-  type,
+export default function TextArea({
   label,
   helper,
   value,
@@ -15,6 +14,7 @@ export default function Input({
   onBlur,
   width,
   readOnly = false,
+  maxCaracters,
 }) {
   const handleChange = ({ target }) => {
     onChange(target.value);
@@ -31,13 +31,7 @@ export default function Input({
 
   return (
     <div className="input-container" style={{ width: width }}>
-      <input
-        className={`${value !== '' ? 'hasValue' : null} ${
-          type === 'password' && value.length < 6 && value !== ''
-            ? 'invalidPassword'
-            : null
-        }`}
-        type={type}
+      <textarea
         value={value}
         onClick={handleClick}
         onFocus={handleFocus}
@@ -48,12 +42,14 @@ export default function Input({
       />
       <label>{label}</label>
       <span className="helper">{helper}</span>
+      {maxCaracters && (
+        <span className="counter">{`${value.length}/${maxCaracters}`}</span>
+      )}
     </div>
   );
 }
 
-Input.propTypes = {
-  type: PropTypes.string.isRequired,
+TextArea.propTypes = {
   label: PropTypes.string,
   helper: PropTypes.string,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -63,4 +59,5 @@ Input.propTypes = {
   onBlur: PropTypes.func,
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   readOnly: PropTypes.bool,
+  maxCaracters: PropTypes.number,
 };

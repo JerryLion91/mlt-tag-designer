@@ -4,7 +4,7 @@
 
 ### `HomePageContactForm`
 
-- [ ] Develop form
+- [x] Develop form
 - [ ] Develop conection with back end to receive e-mails
 
 ### `HomePage`
