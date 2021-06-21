@@ -46,7 +46,7 @@ function useProvideAuth() {
         };
         try {
           await db.runTransaction(async (transaction) => {
-            const docRef = db.collection('users').doc(user.uid);
+            const docRef = db.collection('users').doc(signedUser.uid);
             const doc = await transaction.get(docRef);
             if (doc.exists) {
               transaction.update(docRef, userRecord);
