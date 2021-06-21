@@ -9,7 +9,7 @@
 
 ### `HomePage`
 
-- [ ] Correct line style
+- [x] Correct line style
 - [ ] When home page shortcut in the footer is clicked, scroll up
 
 ### `LoadingPage`

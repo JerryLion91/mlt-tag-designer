@@ -64,7 +64,7 @@ const styles = {
     fontSize: 'calc(25px + 2vmin)',
   },
   lineStyle: {
-    minWidth: '250px',
+    minWidth: '280px',
     maxWidth: '600px',
     width: '100%',
     height: '2px',
