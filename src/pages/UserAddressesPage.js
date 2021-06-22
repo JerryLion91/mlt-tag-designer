@@ -1,54 +1,62 @@
+// Libs
 import React from 'react';
+
+// Helpers
+import { useAuth } from '../helpers/use-auth';
+import { useHistory, useLocation } from 'react-router-dom';
+
+// style Components
+import Header from '../components/Header';
 import AppBody from '../components/AppBody';
 import Button from '../components/Button';
 import Footer from '../components/Footer';
-import Header from '../components/Header';
-import SettingsButton from '../components/SettingsButton';
-import { useHistory, useLocation } from 'react-router-dom';
-import { useAuth } from '../helpers/use-auth';
 import AddressCard from '../components/AddressCard';
+import LoadingComponent from '../components/LoadingComponent';
 
+// functional Components
+import SettingsButton from '../components/SettingsButton';
+import Input from '../components/Input';
+
+// Styles
 import styles from '../styles/styles';
-import Input from '../components//Input';
-import LoadingPage from './LoadingPage';
 
 // DataBank
-// import * as api from '../../service/apiService';
+import { useFirestore } from '../service/use-firestore';
 
-export default function AddressesPage() {
+export default function AddressesPage({ showMessage }) {
   const location = useLocation();
   const history = useHistory();
   const { from } = location.state || { from: '/' };
 
-  const [loading, setLoading] = React.useState(true);
+  const firestore = useFirestore();
+
+  const [isLoading, setIsLoading] = React.useState(true);
 
   // get user addresses
   const { user } = useAuth();
 
   const [userAddresses, setUserAddresses] = React.useState(null);
 
-  // const getAddresses = async () => {
-  //   try {
-  //     const { data } = await api.getUserAddressesByUid(user.uid);
-  //     const addressesWithoutDetails = data.addresses.map((address) => {
-  //       return {
-  //         ...address,
-  //         detailed: false,
-  //       };
-  //     });
-  //     setUserAddresses(addressesWithoutDetails);
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.error('Cannot retrive addresses data' + error);
-  //   }
-  // };
-  // React.useEffect(() => {
-  //   if (user) {
-  //     if (!userAddresses) {
-  //       getAddresses();
-  //     }
-  //   }
-  // }, [userAddresses, user]);
+  const getAddresses = async () => {
+    try {
+      const addresses = await firestore.getUserAddressesByUid(user.uid);
+      const addressesWithoutDetails = addresses.map((address) => {
+        return {
+          ...address,
+          detailed: false,
+        };
+      });
+      setUserAddresses(addressesWithoutDetails);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Cannot retrive addresses data' + error);
+    }
+  };
+  React.useEffect(() => {
+    if (user) {
+      getAddresses();
+    }
+  }, [user]);
   // End get user addresses
 
   const addNewAddress = () => {
@@ -72,17 +80,17 @@ export default function AddressesPage() {
       return i !== index;
     });
 
-    // firestore
-    //   .updateUserAdresses(uid, newAddressArray)
-    //   .then((data) => {
-    //     // UserAddress updated.
-    //     setUserAddresses(data);
-    //   })
-    //   .catch((error) => {
-    //     // An error happened.
-    //     console.log(error.code);
-    //     console.log(error.message);
-    //   });
+    firestore
+      .updateUserByUid(user.uid, { addresses: newAddressArray })
+      .then(({ addresses }) => {
+        // UserAddress updated.
+        setUserAddresses(addresses);
+      })
+      .catch((error) => {
+        // An error happened.
+        console.log(error.code);
+        console.log(error.message);
+      });
   };
 
   const setDefault = (index) => {
@@ -90,17 +98,17 @@ export default function AddressesPage() {
     const newDefaultAddress = newAddressArray.splice(index, 1);
     newAddressArray.unshift(newDefaultAddress[0]);
 
-    // firestore
-    //   .updateUserAdresses(uid, newAddressArray)
-    //   .then((data) => {
-    //     // UserAddress updated.
-    //     setUserAddresses(data);
-    //   })
-    //   .catch((error) => {
-    //     // An error happened.
-    //     console.log(error.code);
-    //     console.log(error.message);
-    //   });
+    firestore
+      .updateUserByUid(user.uid, { addresses: newAddressArray })
+      .then(({ addresses }) => {
+        // UserAddress updated.
+        setUserAddresses(addresses);
+      })
+      .catch((error) => {
+        // An error happened.
+        console.log(error.code);
+        console.log(error.message);
+      });
   };
 
   const handleSave = (index) => {
@@ -111,27 +119,29 @@ export default function AddressesPage() {
       }
     }
     if (propertyArray.length > 0) {
-      alert(
-        `You must fill all fields to save.\n
-${propertyArray.join(', ')} must be filled`
-      );
+      const error = {
+        code: 'address/invalid',
+        message: `You must fill all fields to save.\n
+      ${propertyArray.join(', ')} must be filled`,
+      };
+      showMessage(error);
       return;
     }
 
     const newAddressArray = Array.from(userAddresses);
     newAddressArray[index].saved = true;
 
-    // firestore
-    //   .updateUserAdresses(uid, newAddressArray)
-    //   .then((data) => {
-    //     // UserAddress updated.
-    //     setUserAddresses(data);
-    //   })
-    //   .catch((error) => {
-    //     // An error happened.
-    //     console.log(error.code);
-    //     console.log(error.message);
-    //   });
+    firestore
+      .updateUserByUid(user.uid, { addresses: newAddressArray })
+      .then(({ addresses }) => {
+        // UserAddress updated.
+        setUserAddresses(addresses);
+      })
+      .catch((error) => {
+        // An error happened.
+        console.log(error.code);
+        console.log(error.message);
+      });
   };
 
   const handleChange = (newAddress, index) => {
@@ -153,7 +163,11 @@ ${propertyArray.join(', ')} must be filled`
   };
   const handleHideDetails = (index) => {
     if (!userAddresses[index].saved) {
-      alert('You cannot hide unsaved changes');
+      const error = {
+        code: 'address/hide-unsaved',
+        message: 'You cannot hide unsaved changes',
+      };
+      showMessage(error);
     } else {
       setUserAddresses((prevState) => {
         const newAddressArray = Array.from(prevState);
@@ -169,7 +183,13 @@ ${propertyArray.join(', ')} must be filled`
         return saved === false;
       })
     ) {
-      alert('You cannot leave with unsaved changes');
+      const error = {
+        code: 'address/leave-unsaved',
+        message:
+          'Leave this page will lost unsaved changes. Do you want leave anyway?',
+        values: { callback: () => history.push(from) },
+      };
+      showMessage(error);
     } else {
       history.push(from);
     }
@@ -177,15 +197,15 @@ ${propertyArray.join(', ')} must be filled`
 
   return (
     <>
-      {loading ? (
-        <LoadingPage />
-      ) : (
-        <>
-          <Header subtitle="My Addresses">
-            <SettingsButton />
-            <Button onClick={goBack} icon={'navigate_before'} />
-          </Header>
-          <AppBody>
+      <Header subtitle="My Addresses">
+        <SettingsButton />
+        <Button onClick={goBack} icon={'navigate_before'} />
+      </Header>
+      <AppBody>
+        {isLoading ? (
+          <LoadingComponent height={'40vh'} />
+        ) : (
+          <>
             {userAddresses.map((address, index) => {
               return (
                 <div key={`A${index}`}>
@@ -302,10 +322,10 @@ ${propertyArray.join(', ')} must be filled`
                 Add New Address
               </Button>
             </div>
-          </AppBody>
-          <Footer defaultButtons />
-        </>
-      )}
+          </>
+        )}
+      </AppBody>
+      <Footer defaultButtons />
     </>
   );
 }

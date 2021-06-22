@@ -5,7 +5,7 @@ import UserPaymentsPage from '../../pages/UserPaymentsPage';
 import UserAddressesPage from '../../pages/UserAddressesPage';
 import UserOrdersPage from '../../pages/UserOrdersPage';
 
-export default function UserParent() {
+export default function UserParent({ showMessage }) {
   return (
     <Switch>
       <Route path="/user/profile">
@@ -15,7 +15,7 @@ export default function UserParent() {
         <UserPaymentsPage />
       </Route>
       <Route path="/user/addresses">
-        <UserAddressesPage />
+        <UserAddressesPage showMessage={showMessage} />
       </Route>
       <Route path="/user/orders">
         <UserOrdersPage />

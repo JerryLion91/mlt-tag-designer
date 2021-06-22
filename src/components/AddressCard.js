@@ -47,7 +47,7 @@ export default function AddressCard({
 
   return (
     <div>
-      <div style={styles.divFlexRow}>
+      <div style={{ ...styles.divFlexRow, width: '100%' }}>
         {index === undefined ? (
           <span style={{ alignSelf: 'center', margin: '10px' }}>
             Address Details

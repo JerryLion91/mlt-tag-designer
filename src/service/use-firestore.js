@@ -64,7 +64,7 @@ export const useFirestore = () => {
     try {
       const docRef = await userColectionRef.doc(uid).update(update);
       console.log('User Document successfully updated!');
-      return docRef;
+      return update;
     } catch (error) {
       console.error('Error updating document: ', error);
     }

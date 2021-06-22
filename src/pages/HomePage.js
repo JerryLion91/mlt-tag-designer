@@ -3,7 +3,7 @@ import React from 'react';
 
 // Helpers
 import { useKeypress } from '../helpers/use-keypress';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 // style Components
 import Header from '../components/Header';

@@ -65,7 +65,7 @@
 
 ### `UserAddresses`
 
-- [ ] showing blank page
+- [x] showing blank page
 
 ### `UserOrders`
 
