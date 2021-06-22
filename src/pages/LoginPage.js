@@ -8,7 +8,6 @@ import { useHistory, useLocation } from 'react-router-dom';
 // Components
 import Button from '../components/Button';
 import Footer from '../components/Footer';
-import MessageModal from '../components/MessageModal';
 import Input from '../components/Input';
 import SettingsButton from '../components/SettingsButton';
 import LoadingComponent from '../components/LoadingComponent';
@@ -16,10 +15,12 @@ import LoadingComponent from '../components/LoadingComponent';
 // Styles
 import styles from '../styles/styles';
 
-export default function LoginPage() {
+export default function LoginPage({ showMessage }) {
   const auth = useAuth();
   const history = useHistory();
-  const { from } = useLocation().state || { from: { pathname: '/' } };
+  const location = useLocation();
+  const { from } = location.state || { from: { pathname: '/' } };
+  const { email: receivedEmail } = location.state || { email: '' };
 
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -47,7 +48,10 @@ export default function LoginPage() {
         history.push(from.pathname);
       })
       .catch((err) => {
-        handleShowMessage(err);
+        showMessage({
+          ...err,
+          values: { email: email, callback: redirectToRegister },
+        });
       });
   };
 
@@ -60,13 +64,14 @@ export default function LoginPage() {
   };
 
   const handleForgotPassword = () => {
+    const { email } = userInput;
     auth
-      .sendPasswordResetEmail(userInput.email)
+      .sendPasswordResetEmail(email)
       .then((res) => {
-        handleShowMessage(res);
+        showMessage({ ...res, values: { email: email } });
       })
       .catch((err) => {
-        handleShowMessage(err);
+        showMessage({ ...err, values: { email: email } });
       });
   };
 
@@ -78,59 +83,8 @@ export default function LoginPage() {
     history.push(userLocation);
   };
 
-  // start modal code
-  const modalReducer = (_, action) => {
-    switch (action.type) {
-      case 'trigger':
-        const { method, message, value, callback } = action;
-        return { showModal: true, method, message, value, callback };
-      case 'response':
-        if (action.callback) {
-          action.callback(action.value);
-        }
-        return { showModal: false };
-      default:
-        throw new Error();
-    }
-  };
-
-  const [modalState, modalDispatch] = React.useReducer(modalReducer, {
-    showModal: false,
-    method: null,
-    message: null,
-    value: null,
-    callback: null,
-  });
-
-  const handleShowMessage = (props) => {
-    const { code, message } = props;
-    switch (code) {
-      case 'auth/user-not-found':
-        modalDispatch({
-          type: 'trigger',
-          method: 'confirm',
-          message: `${message} Do you want to register insted? `,
-          value: userInput.email,
-          callback: redirectToRegister,
-        });
-        break;
-      case 'auth/invalid-email':
-      case 'auth/wrong-password':
-        modalDispatch({ type: 'trigger', method: 'alert', message });
-        break;
-      case 'auth/cancelled-popup-request':
-        break;
-      default:
-        console.log(props);
-        console.log({ code, message });
-        break;
-    }
-  };
-  // end modal code
-
   return (
     <>
-      <MessageModal state={modalState} dispatch={modalDispatch} />
       <header style={styles.loginHeader}>
         <div
           style={{

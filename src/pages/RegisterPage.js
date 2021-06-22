@@ -8,7 +8,6 @@ import { useHistory, useLocation } from 'react-router-dom';
 // Components
 import Button from '../components/Button';
 import Footer from '../components/Footer';
-import MessageModal from '../components/MessageModal';
 import RegisterForm from '../components/RegisterForm';
 import SettingsButton from '../components/SettingsButton';
 import LoadingComponent from '../components/LoadingComponent';
@@ -16,7 +15,7 @@ import LoadingComponent from '../components/LoadingComponent';
 // Styles
 import styles from '../styles/styles';
 
-export default function RegisterPage() {
+export default function RegisterPage({ showMessage }) {
   const auth = useAuth();
   const history = useHistory();
   const { email: receivedEmail } = useLocation().state || { email: '' };
@@ -46,7 +45,7 @@ export default function RegisterPage() {
     setIsLoading(true);
     const { name, password, repeatedPassword, email, address } = userInput;
     if (password !== repeatedPassword) {
-      handleShowMessage({
+      showMessage({
         code: 'input/password-different',
         message: 'The two fields with password must be equal.',
       });
@@ -59,45 +58,8 @@ export default function RegisterPage() {
         history.push('/');
       })
       .catch((err) => {
-        handleShowMessage(err);
+        showMessage(err);
       });
-  };
-
-  const modalReducer = (state, action) => {
-    switch (action.type) {
-      case 'trigger':
-        const { method, message, value, callback } = action;
-        return { showModal: true, method, message, value, callback };
-      case 'response':
-        if (action.callback) {
-          action.callback(action.value);
-        }
-        return { showModal: false };
-      default:
-        throw new Error();
-    }
-  };
-  const [modalState, modalDispatch] = React.useReducer(modalReducer, {
-    showModal: false,
-    method: null,
-    message: null,
-    value: null,
-    callback: null,
-  });
-
-  const handleShowMessage = (props) => {
-    const { code, message } = props;
-    switch (code) {
-      case 'input/password-different':
-      case 'auth/weak-password':
-      case 'auth/email-already-in-use':
-      case 'auth/invalid-email':
-        modalDispatch({ type: 'trigger', method: 'alert', message });
-        break;
-      default:
-        console.log(props);
-        break;
-    }
   };
 
   const signInWithGoogle = () => {
@@ -110,7 +72,6 @@ export default function RegisterPage() {
 
   return (
     <>
-      <MessageModal state={modalState} dispatch={modalDispatch} />
       <header style={styles.loginHeader}>
         <div
           style={{
