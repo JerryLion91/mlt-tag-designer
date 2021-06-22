@@ -1,5 +1,11 @@
+// React
 import React, { useState, useEffect, useContext, createContext } from 'react';
+
+// FirebaseConfig
 import firebase from '../firebase';
+
+// DataBank
+import { useFirestore } from '../service/use-firestore';
 
 const authContext = createContext();
 
@@ -20,7 +26,7 @@ export const useAuth = () => {
 function useProvideAuth() {
   const [user, setUser] = useState(null);
 
-  const db = firebase.firestore();
+  const firestore = useFirestore();
 
   // fired with loginWithGoogle button in LoginPage -->OK
   const signInWithGooglePopup = async (cb) => {
@@ -43,21 +49,9 @@ function useProvideAuth() {
           email: signedUser.email,
           photoUrl: signedUser.photoURL,
           phone: signedUser.phoneNumber,
+          addresses: [],
         };
-        try {
-          await db.runTransaction(async (transaction) => {
-            const docRef = db.collection('users').doc(signedUser.uid);
-            const doc = await transaction.get(docRef);
-            if (doc.exists) {
-              transaction.update(docRef, userRecord);
-            } else {
-              userRecord.addresses = null;
-              transaction.set(docRef, userRecord);
-            }
-          });
-        } catch (error) {
-          return Promise.reject(error);
-        }
+        await firestore.postNewUser(signedUser.uid, userRecord);
         cb();
       })
       .catch((error) => {
@@ -81,9 +75,9 @@ function useProvideAuth() {
     return firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        setUser(userCredential.user);
-        return userCredential.user;
+      .then((response) => {
+        setUser(response.user);
+        return response.user;
       })
       .catch((error) => {
         return Promise.reject(error);
@@ -95,32 +89,32 @@ function useProvideAuth() {
     return firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(async (userCredential) => {
-        const user = userCredential.user;
-        user.sendEmailVerification().catch((error) => {
+      .then(async (response) => {
+        const signedUser = response.user;
+        signedUser.sendEmailVerification().catch((error) => {
           console.log(error);
         });
-        setUser(user);
+        setUser(signedUser);
         const userRecord = {
-          displayName: user.displayName,
-          email: user.email,
-          photoUrl: user.photoURL,
-          addresses: null,
-          phone: user.phoneNumber,
+          displayName: signedUser.displayName,
+          email: signedUser.email,
+          photoUrl: signedUser.photoURL,
+          addresses: [],
+          phone: signedUser.phoneNumber,
         };
         if (username) {
           try {
-            await user.updateProfile({
+            await signedUser.updateProfile({
               displayName: username,
             });
-            userRecord.displayName = user.displayName;
+            userRecord.displayName = signedUser.displayName;
           } catch (error) {
             console.log(error);
           }
         }
         if (phoneNumber) {
           try {
-            await user.updatePhoneNumber(phoneNumber);
+            await signedUser.updatePhoneNumber(phoneNumber);
             userRecord.phone = phoneNumber;
           } catch (error) {
             console.log(error);
@@ -133,15 +127,7 @@ function useProvideAuth() {
             console.log(error);
           }
         }
-        await db.runTransaction(async (transaction) => {
-          const docRef = db.collection('users').doc(user.uid);
-          const doc = await transaction.get(docRef);
-          if (doc.exists) {
-            transaction.update(docRef, userRecord);
-          } else {
-            transaction.set(docRef, userRecord);
-          }
-        });
+        await firestore.postNewUser(signedUser.uid, userRecord);
       })
       .catch((error) => {
         const { code: errorCode, message: errorMessage } = error;
@@ -158,10 +144,10 @@ function useProvideAuth() {
     return firebase
       .auth()
       .signInAnonymously()
-      .then((userCredential) => {
-        setUser(userCredential.user);
+      .then((response) => {
+        setUser(response.user);
         cd();
-        return userCredential.user;
+        return response.user;
       })
       .catch((error) => {
         var errorCode = error.code;
@@ -191,12 +177,7 @@ function useProvideAuth() {
       })
       .then(async () => {
         setUser(firebase.auth().currentUser);
-        const docRef = db.collection('users').doc(uid);
-        try {
-          await docRef.update({ displayName: userName });
-        } catch (error) {
-          Promise.reject(error);
-        }
+        await firestore.updateUserByUid(uid, { displayName: userName });
       })
       .catch((error) => {
         // An error happened.
