@@ -9,14 +9,6 @@ export const useFirestore = () => {
 
   /**
    *
-   */
-  const getServerRunning = async () => {
-    return 'server_running_OK';
-  };
-  // End getServerRunning
-
-  /**
-   *
    * POST   /users?uid=  Complete User
    * @param {String} uid
    * @param {Object} userData
@@ -209,17 +201,38 @@ export const useFirestore = () => {
       if (document.exists) {
         return document.data();
       } else {
-        // doc.data() will be undefined in this case
-        console.log('Standards not found in the DataBank');
+        const standards = {
+          fontsArray: [
+            { description: 'Serif', value: 'serif' },
+            { description: 'Arial', value: 'arial' },
+            { description: 'Monospace', value: 'monospace' },
+            { description: 'Chicle', value: 'Chicle' },
+            { description: 'Fredoka One', value: 'Fredoka One' },
+            { description: 'Lemon', value: 'Lemon' },
+            { description: 'Salsa', value: 'Salsa' },
+          ],
+          insideColorArray: [
+            { description: 'Black', value: 'black' },
+            { description: 'Blue', value: 'blue' },
+            { description: 'Red', value: 'red' },
+          ],
+          outsideColorArray: [
+            { description: 'White', value: 'white' },
+            { description: 'Yellow', value: 'yellow' },
+            { description: 'Gray', value: 'light-gray' },
+          ],
+          tagPrices: { shipping_price: 10, tag_std_price: 1.2 },
+        };
+        docRef.set(standards);
+        return standards;
       }
     } catch (error) {
-      console.error('Error getting document: ', error);
+      Promise.reject(error);
     }
   };
   // End getAvailability
 
   return {
-    getServerRunning,
     postNewUser,
     getAllUsers,
     getUserByUid,
