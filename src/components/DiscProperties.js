@@ -3,13 +3,11 @@ import Input from './Input';
 import Select from './Select';
 
 import PropTypes from 'prop-types';
-import styles from '../styles/styles';
 
 export default function DiscProperties({ tag, availability, onChange, style }) {
-  // const { typedName, fontFamily, insideColor, outsideColor } = tag;
+  const { typedName, fontFamily, insideColor, outsideColor } = tag;
 
   const { fontsArray, insideColorArray, outsideColorArray } = availability;
-  // console.log(availability);
 
   const handleTypingName = (newName) => {
     onChange({ ...tag, typedName: newName });
@@ -42,27 +40,30 @@ export default function DiscProperties({ tag, availability, onChange, style }) {
         <Input
           type="text"
           label={'Tag Name:'}
-          value={tag.typedName}
+          value={typedName}
           onChange={handleTypingName}
         />
 
         <Select
           array={fontsArray}
-          onChange={handleSelectFont}
           label="Font Type:"
+          value={fontFamily}
+          onChange={handleSelectFont}
           applyFont
         />
 
         <Select
           array={insideColorArray}
-          onChange={handleSelectInsideColor}
           label="Inside Color:"
+          value={insideColor}
+          onChange={handleSelectInsideColor}
         />
 
         <Select
           array={outsideColorArray}
-          onChange={handleSelectOutsideColor}
           label="Outside Color:"
+          value={outsideColor}
+          onChange={handleSelectOutsideColor}
         />
       </form>
     </div>

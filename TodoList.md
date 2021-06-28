@@ -5,6 +5,8 @@
 ### `HomePageContactForm`
 
 - [x] Develop form
+- [x] Add modal message
+- [ ] Develop form with input for order
 - [ ] Develop conection with back end to receive e-mails
 
 ### `HomePage`
@@ -36,6 +38,7 @@
 
 ### `TagConstructor`
 
+- [x] Save the tag to cookie
 - [ ] Clear button need to reflect in the inputs
 
 ### `TagSummary`

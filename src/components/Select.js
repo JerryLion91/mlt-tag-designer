@@ -1,6 +1,5 @@
 import React from 'react';
 import { Modal } from 'react-responsive-modal';
-import { useKeypress } from '../helpers/use-keypress';
 
 import Input from './Input';
 
@@ -8,7 +7,7 @@ import PropTypes from 'prop-types';
 
 export default function Select({
   array,
-  value = '',
+  value,
   onChange,
   label,
   applyFont,
@@ -16,7 +15,18 @@ export default function Select({
 }) {
   const [showModal, setShowModal] = React.useState({ state: false, index: -1 });
 
-  const [input, setInput] = React.useState(value);
+  const getDescription = () => {
+    if (array) {
+      const index = array.findIndex((el) => el.value === value);
+      return array[index].description;
+    }
+    return '';
+  };
+  React.useEffect(() => {
+    setInput(getDescription);
+  }, [value]);
+
+  const [input, setInput] = React.useState(getDescription);
 
   const myRef = React.useRef(null);
 
@@ -87,7 +97,7 @@ export default function Select({
           setInput(newValue);
         }}
         onFocus={() => {
-          setShowModal({ state: true, index: -1 });
+          setShowModal({ state: true, index: 0 });
         }}
         onBlur={() => setShowModal({ state: false })}
         readOnly
@@ -123,14 +133,14 @@ export default function Select({
         }}
       >
         <>
-          <div
+          {/* <div
             style={{
               padding: '15px',
               color: 'white',
               border: `${showModal.index === -1 ? '1px solid #37474f' : ''}`,
             }}
             onClick={() => setInput('')}
-          ></div>
+          ></div> */}
           {array.map((element, index) => {
             return (
               <div
@@ -160,4 +170,5 @@ Select.propTypes = {
   array: PropTypes.array.isRequired,
   onChange: PropTypes.func.isRequired,
   label: PropTypes.string,
+  value: PropTypes.string,
 };

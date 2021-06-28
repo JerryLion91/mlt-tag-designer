@@ -1,62 +1,71 @@
+// Libs
 import React from 'react';
-import Tag from '../components/Tag';
-import DiscProperties from '../components/DiscProperties';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import AppBody from '../components/AppBody';
-import Button from '../components/Button';
-import { useHistory } from 'react-router-dom';
-import LoadingComponent from '../components/LoadingComponent';
-
 import PropTypes from 'prop-types';
 
+// Helpers
+import { useHistory } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
+
+// style Components
+import Header from '../components/Header';
+import AppBody from '../components/AppBody';
+import Button from '../components/Button';
+import Footer from '../components/Footer';
+
+// functional Components
+import Tag from '../components/Tag';
+import DiscProperties from '../components/DiscProperties';
+import LoadingComponent from '../components/LoadingComponent';
+
+// Styles
 import styles from '../styles/styles';
 
-export default function TagConstructorPage({ changeOrder }) {
-  const history = useHistory();
-  const availability = null;
-  // const [availability, setAvailability] = React.useState(() => {
-  //   Promise.all([
-  //     api.getAvailability('fontsArray'),
-  //     api.getAvailability('insideColorArray'),
-  //     api.getAvailability('outsideColorArray'),
-  //   ])
-  //     .then((values) => {
-  //       setAvailability({
-  //         fontsArray: values[0].data.array,
-  //         insideColorArray: values[1].data.array,
-  //         outsideColorArray: values[2].data.array,
-  //       });
-  //     })
-  //     .catch((err) => {
-  //       return null;
-  //     });
-  // });
-
-  const [tag, setTag] = React.useState({
+export default function TagConstructorPage({
+  availability,
+  changeOrder,
+  showMessage,
+}) {
+  const blank_tag = {
     typedName: '',
     fontFamily: 'serif',
     insideColor: 'black',
     outsideColor: 'white',
     quantity: 1,
-  });
-
-  const handleTagChange = (newTag) => setTag(newTag);
-
-  const handleHistoryClick = () => {
-    setTag({
-      typedName: '',
-      fontFamily: 'serif',
-      insideColor: 'black',
-      outsideColor: 'white',
-      quantity: 1,
-    });
+  };
+  const [tag, setTag] = React.useState(blank_tag);
+  const handleTagChange = (newTag) => {
+    setTag(newTag);
+    setCookie('tag', newTag, { path: '/tag-constructor' });
   };
 
-  const handleFinishClick = () => {
+  const handleHistoryClick = () => {
+    setTag(blank_tag);
+    removeCookie('tag', { path: '/tag-constructor' });
+  };
+
+  const history = useHistory();
+
+  const finishDesign = () => {
     changeOrder({ type: 'addTag', tag: tag });
     history.push('/tag-constructor/sumary');
   };
+  const handleFinishClick = () => {
+    if (tag.typedName === '') {
+      showMessage({
+        code: 'tag/missingName',
+        message: 'Your tag dont have a name. Do you want to procced?',
+        values: { callback: finishDesign },
+      });
+    }
+  };
+
+  const [cookies, setCookie, removeCookie] = useCookies(['tag']);
+  React.useEffect(() => {
+    const { tag } = cookies;
+    if (tag) {
+      setTag(tag);
+    }
+  }, [cookies]);
 
   return (
     <>
@@ -93,4 +102,8 @@ export default function TagConstructorPage({ changeOrder }) {
   );
 }
 
-const style = { visibility: 'hidden', margin: '0px', fontSize: '0px' };
+TagConstructorPage.propTypes = {
+  availability: PropTypes.object.isRequired,
+  changeOrder: PropTypes.func.isRequired,
+  showMessage: PropTypes.func.isRequired,
+};

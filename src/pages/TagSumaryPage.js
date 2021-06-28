@@ -7,21 +7,23 @@ import AppBody from '../components/AppBody';
 import Footer from '../components/Footer';
 import Input from '../components/Input';
 import SummaryTable from '../components/SummaryTable';
+import { useCookies } from 'react-cookie';
 
 import styles from '../styles/styles';
 
 import PropTypes from 'prop-types';
 
-export default function TagSumaryPage({ order, changeOrder, standards }) {
+export default function TagSumaryPage({ availability, order, changeOrder }) {
   const history = useHistory();
-  const { tag_std_price } = standards;
+
+  const { tag_std_price } = availability.tagPrices;
 
   const handleChange = (newQuantity, index) => {
     const newTag = {
-      typedName: order.TAGs[index].typedName,
-      fontFamily: order.TAGs[index].fontFamily,
-      insideColor: order.TAGs[index].insideColor,
-      outsideColor: order.TAGs[index].outsideColor,
+      typedName: order.tags[index].typedName,
+      fontFamily: order.tags[index].fontFamily,
+      insideColor: order.tags[index].insideColor,
+      outsideColor: order.tags[index].outsideColor,
       quantity: newQuantity,
     };
     changeOrder({ type: 'changeTag', index: index, tag: newTag });
@@ -29,6 +31,18 @@ export default function TagSumaryPage({ order, changeOrder, standards }) {
 
   const handleDelete = (index) => {
     changeOrder({ type: 'removeTag', index: index });
+  };
+
+  const [cookies, setCookie, removeCookie] = useCookies(['tag', 'order']);
+  React.useEffect(() => {
+    const { order } = cookies;
+    if (order) {
+      console.log(order);
+    }
+  }, [cookies]);
+  const handleDesignAnother = () => {
+    removeCookie('tag', { path: '/tag-constructor' });
+    history.push('/tag-constructor');
   };
 
   return (
@@ -41,7 +55,7 @@ export default function TagSumaryPage({ order, changeOrder, standards }) {
         />
       </Header>
       <AppBody>
-        {order.TAGs.map((tag, index) => {
+        {order.tags.map((tag, index) => {
           const {
             typedName,
             fontFamily,
@@ -99,11 +113,11 @@ export default function TagSumaryPage({ order, changeOrder, standards }) {
             </div>
           );
         })}
-        <SummaryTable TAGs={order.TAGs} tag_std_price={tag_std_price} />
+        <SummaryTable TAGs={order.tags} tag_std_price={tag_std_price} />
         <div style={styles.divFlexRow}>
           <Button
             style={{ ...styles.btnFilledPurple, margin: '0px 10px 0px 0px' }}
-            onClick={() => history.push('/tag-constructor')}
+            onClick={handleDesignAnother}
           >
             Design Another
           </Button>

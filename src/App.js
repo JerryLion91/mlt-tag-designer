@@ -23,6 +23,7 @@ import MessageModal from './components/MessageModal';
 
 // Providers
 import { ProvideAuth, useAuth } from './helpers/use-auth.js';
+import { CookiesProvider } from 'react-cookie';
 
 export default function App() {
   const auth = useAuth();
@@ -89,55 +90,72 @@ export default function App() {
           callback: values.callback,
         });
         break;
+      case 'form/response':
+        modalDispatch({
+          type: 'trigger',
+          method: 'alert',
+          message: message,
+          callback: values.callback,
+        });
+        break;
+      case 'tag/missingName':
+        modalDispatch({
+          type: 'trigger',
+          method: 'confirm',
+          message: message,
+          callback: values.callback,
+        });
+        break;
       default:
-        console.log(props);
         console.log({ code, message, values });
         break;
     }
   };
 
   return (
-    <ProvideAuth>
-      <BrowserRouter>
-        <ScrollToTop />
-        <MessageModal state={modalState} dispatch={modalDispatch} />
-        <Switch>
-          <Route path="/login/register">
-            {auth ? (
-              <Redirect
-                to={{
-                  pathname: '/',
-                }}
-              />
-            ) : (
-              <RegisterPage showMessage={handleShowMessage} />
-            )}
-          </Route>
-          <Route path="/login">
-            {auth ? (
-              <Redirect
-                to={{
-                  pathname: '/',
-                }}
-              />
-            ) : (
-              <LoginPage showMessage={handleShowMessage} />
-            )}
-          </Route>
-          <Route path="/tag-constructor">
-            <ParentTagContructor />
-          </Route>
-          <Route path="/user">
-            <ParentUser showMessage={handleShowMessage} />
-          </Route>
-          <Route path="/contact-form">
-            <HomeContactForm />
-          </Route>
-          <Route path="/">
-            <HomePage />
-          </Route>
-        </Switch>
-      </BrowserRouter>
-    </ProvideAuth>
+    <CookiesProvider>
+      <ProvideAuth>
+        <BrowserRouter>
+          <ScrollToTop />
+          <MessageModal state={modalState} dispatch={modalDispatch} />
+          <Switch>
+            <Route path="/login/register">
+              {auth ? (
+                <Redirect
+                  to={{
+                    pathname: '/',
+                  }}
+                />
+              ) : (
+                <RegisterPage showMessage={handleShowMessage} />
+              )}
+            </Route>
+            <Route path="/login">
+              {auth ? (
+                <Redirect
+                  to={{
+                    pathname: '/',
+                  }}
+                />
+              ) : (
+                <LoginPage showMessage={handleShowMessage} />
+              )}
+            </Route>
+            <Route path="/tag-constructor">
+              <ParentTagContructor showMessage={handleShowMessage} />
+            </Route>
+            <Route path="/user">
+              <ParentUser showMessage={handleShowMessage} />
+            </Route>
+            <Route path="/contact-form">
+              <HomeContactForm showMessage={handleShowMessage} />
+            </Route>
+            <Route path="/">
+              <HomePage />
+            </Route>
+          </Switch>
+        </BrowserRouter>
+      </ProvideAuth>
+    </CookiesProvider>
   );
 }

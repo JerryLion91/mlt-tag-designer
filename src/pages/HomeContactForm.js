@@ -20,7 +20,7 @@ import styles from '../styles/styles';
 import TextArea from '../components/TextArea';
 import LoadingComponent from '../components/LoadingComponent';
 
-export default function HomeContactForm() {
+export default function HomeContactForm({ showMessage }) {
   const auth = useAuth();
   const location = useLocation();
   const history = useHistory();
@@ -74,6 +74,17 @@ export default function HomeContactForm() {
     subject: '',
     message: '',
   });
+
+  const sendMessage = () => {
+    showMessage({
+      code: 'form/response',
+      message: 'We received your message',
+      values: {
+        callback: () => history.push('/'),
+      },
+    });
+    console.log(form);
+  };
 
   return (
     <>
@@ -150,7 +161,7 @@ export default function HomeContactForm() {
                 // this btn inst in a parent div with width, alignSelf is solution
                 alignSelf: 'center',
               }}
-              onClick={() => history.push('/tag-constructor')}
+              onClick={sendMessage}
               icon={''}
             >
               Send message
